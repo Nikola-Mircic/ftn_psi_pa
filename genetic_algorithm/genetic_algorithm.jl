@@ -1,17 +1,18 @@
 include("population.jl")
 include("crossover.jl")
 
-bestFitnes = []
 
 function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
+    bestFitnes = []
+    
     updatePopulationFitness!(population, fitFunction)
 
     push!(bestFitnes, population[1].fitness)
 
-    while !shouldStop(iter)
+    while !shouldStop(iter, bestFitnes)
         n = length(population)
 
-        eliteNumber = Int(elitePercent*n);
+        eliteNumber = Int(trunc(elitePercent*n));
 
         eliteNumber += (eliteNumber % 2 == 1) ? 1 : 0
 
@@ -31,9 +32,9 @@ function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mut
     return length(bestFitnes), population[1]
 end
 
-function shouldStop(iter::Int)
+function shouldStop(iter::Int, bestFitnes)
     n = length(bestFitnes)
-    
+
     if bestFitnes[n] < 0.01
         return true
     elseif n > iter
