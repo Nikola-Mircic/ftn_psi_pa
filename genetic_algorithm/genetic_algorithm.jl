@@ -14,9 +14,9 @@ function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mut
 
         eliteNumber = Int(trunc(elitePercent*n));
 
-        eliteNumber += (eliteNumber % 2 == 1) ? 1 : 0
+        eliteNumber  = eliteNumber + (n-eliteNumber)%2
 
-        elite = population[1:eliteNumber]
+        elite = deepcopy(population[1:eliteNumber])
 
         population = crossover!(population[eliteNumber+1:end], crossoverFunc!)
 
