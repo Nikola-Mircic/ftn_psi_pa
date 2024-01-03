@@ -1,31 +1,51 @@
-include("genetic_algorithm.jl")
+module GeneticAlgorithm
 
-#=
-|   Example:
-|   Find four numbers that add up to 143.
-|
-|   x1 + x2 + x3 + x4 = 143
-|   x1=?, x2=?, x3=?, x4=?
-=#
+include("crossover.jl")
 
-populationSize = 100
-genesLength = 4
-minGene = 0
-maxGene = 143
 
-elitePercent = 0.15
-mutationPercent = 0.2
-numOfIterations = 100
+function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
+    bestFitnes = []
+    
+    updatePopulationFitness!(population, fitFunction)
 
-population = generatePopulation(populationSize, genesLength, minGene, maxGene)
+    push!(bestFitnes, population[1].fitness)
 
-num_gen, best = geneticAlgorithm(population, 
-                                 elitePercent, 
-                                 mutationPercent, 
-                                 makeCrossoverFunc([1;3]), 
-                                 numOfIterations)
+    while !shouldStop(iter, bestFitnes)
+        n = length(population)
 
-println("$(num_gen) -> $best")
+        eliteNumber = Int(trunc(elitePercent*n));
+
+        eliteNumber  = eliteNumber + (n-eliteNumber)%2
+
+        elite = deepcopy(population[1:eliteNumber])
+
+        population = crossover!(population[eliteNumber+1:end], crossoverFunc!)
+
+        mutatePopulation!(population, mutationPercent)
+
+        population = [population; elite]
+
+        updatePopulationFitness!(population, fitFunction)
+
+        push!(bestFitnes, population[1].fitness)
+    end
+
+    return length(bestFitnes), population[1]
+end
+
+function shouldStop(iter::Int, bestFitnes)
+    n = length(bestFitnes)
+
+    if bestFitnes[n] < 0.01
+        return true
+    elseif n > iter
+        return true
+    elseif n > 3
+        return abs(bestFitnes[n-3] - bestFitnes[n]) < 0.1
+    end
+    
+    return false
+end
 
 # ANALYZATION
 
@@ -130,14 +150,13 @@ function printResult(values, results)
     end
 end
 
-println("Elite percentage analysis: \n")
-printResult(collect(0.0:0.05:0.5), analyzeElitePercentage(collect(0.0:0.05:0.5)))
+export geneticAlgorithm
+export getAverage
+export analyzeElitePercentage
+export analyzeMutationPercentage
+export analyzeNumberOfIteration
+export analyzePopulationSize
 
-println("\nMutation percentage analysis: \n")
-printResult(collect(0.0:0.05:0.5), analyzeMutationPercentage(collect(0.0:0.05:0.5)))
+export printResult
 
-println("\nPopulation size analysis: \n")
-printResult(collect(50:10:150), analyzePopulationSize(collect(50:10:150)))
-
-println("\nNumber of iterations analysis: \n")
-printResult(collect(50:10:150), analyzeNumberOfIteration(collect(50:10:150)))
+end
