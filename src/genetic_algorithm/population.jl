@@ -5,7 +5,6 @@ end
 
 Base.show(io::IO, e::Entity) = print(io, "{$(e.fitness)}[$(join(e.genes, ","))]")
 
-
 function  fitFunction(e::Entity)
     return abs(sum(e.genes) - 143)
 end
