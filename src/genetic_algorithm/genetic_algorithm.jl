@@ -1,6 +1,5 @@
 module GeneticAlgorithm
 
-include("population.jl")
 include("crossover.jl")
 
 
