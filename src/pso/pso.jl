@@ -1,3 +1,5 @@
+module PSO
+
 include("swarm.jl")
 
 MAX_ITERATIONS = 100
@@ -51,4 +53,22 @@ function updatePositions!(swarm::Swarm)
     for p in swarm.particles
         p.currentVal = Int.(trunc.(p.currentVal + p.velocity))
     end
+end
+
+export MAX_ITERATIONS
+export pso
+export shouldStop
+export calculateVelocity!
+export updatePositions!
+
+export Particle
+export Swarm
+
+export fitFunction
+export updateParticleFitness!
+
+export printSwarm
+export generateSwarm
+export updateSwarmFitness!
+
 end
