@@ -1,3 +1,4 @@
+using FTN_PSI_PA
 using Test
 
 @testset "Tests" begin

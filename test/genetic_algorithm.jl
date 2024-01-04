@@ -1,4 +1,4 @@
-using GeneticAlgorithm
+using FTN_PSI_PA.GeneticAlgorithm
 
 @testset "GeneticAlgorithm" begin
     #=
@@ -19,11 +19,11 @@ using GeneticAlgorithm
 
     population = generatePopulation(populationSize, genesLength, minGene, maxGene)
 
-    num_gen, best = geneticAlgorithm(population, 
+    num_gen, best = getAverage(population, 
                                     elitePercent, 
                                     mutationPercent, 
                                     makeCrossoverFunc([1;3]), 
                                     numOfIterations)
 
-    @test fitFunction(best) < 0.1 # Test if the absolute error is smaller than 0.1
+    @test best < 0.1 # Test if the absolute error is smaller than 0.1
 end
