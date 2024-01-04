@@ -2,6 +2,20 @@ module GeneticAlgorithm
 
 include("crossover.jl")
 
+export makeCrossoverFunc
+export generatePopulation
+
+export fitFunction
+
+export geneticAlgorithm
+
+export getAverage
+export analyzeElitePercentage
+export analyzeMutationPercentage
+export analyzeNumberOfIteration
+export analyzePopulationSize
+
+export printResult
 
 function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
     bestFitnes = []
@@ -58,7 +72,7 @@ function getAverage(population::Vector{Entity}, elitePercent::Float64, mutationP
                                        elitePercent, 
                                        mutationPercent, 
                                        crossoverFunc!, 
-                                       numOfIterations)
+                                       iter)
         avg_gen += gen_i
         avg_best += best_i.fitness
     end
@@ -149,14 +163,5 @@ function printResult(values, results)
         @printf "%5.2f | %5.2f , %5.2f \n" values[i] results[i,1] results[i,2]
     end
 end
-
-export geneticAlgorithm
-export getAverage
-export analyzeElitePercentage
-export analyzeMutationPercentage
-export analyzeNumberOfIteration
-export analyzePopulationSize
-
-export printResult
 
 end

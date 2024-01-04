@@ -1,6 +1,6 @@
+using FTN_PSI_PA
 using Test
 
 @testset "Tests" begin
-    a = 5
-    @test a == 5 
+    include("genetic_algorithm.jl")
 end
