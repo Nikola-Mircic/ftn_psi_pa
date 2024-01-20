@@ -20,7 +20,7 @@ using FTN_PSI_PA.GeneticAlgorithm
     population = generatePopulation(populationSize, genesLength, minGene, maxGene)
 
     num_gen, best = getAverage(population, 
-                                    elitePercent, 
+                                    elitistSelection(elitePercent), 
                                     mutationPercent, 
                                     makeCrossoverFunc([1;3]), 
                                     numOfIterations)
