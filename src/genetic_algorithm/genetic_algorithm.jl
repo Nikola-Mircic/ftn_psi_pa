@@ -9,6 +9,7 @@ export fitFunction
 export makeCrossoverFunc
 
 export elitistSelection
+export rouletteWheelSelection
 
 export geneticAlgorithm
 
