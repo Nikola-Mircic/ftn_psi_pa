@@ -1,4 +1,4 @@
-module FTN_PSI_PA
+module MetaheuristicAlgos
 
 import Printf
 

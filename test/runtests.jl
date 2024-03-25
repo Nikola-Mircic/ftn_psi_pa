@@ -1,4 +1,4 @@
-using FTN_PSI_PA
+using MetaheuristicAlgos
 using Test
 
 @testset "Tests" begin

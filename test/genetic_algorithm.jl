@@ -1,4 +1,4 @@
-using FTN_PSI_PA.GeneticAlgorithm
+using .GeneticAlgorithm
 
 @testset "GeneticAlgorithm" begin
     #=
