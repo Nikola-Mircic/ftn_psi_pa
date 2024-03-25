@@ -18,12 +18,24 @@ using FTN_PSI_PA.GeneticAlgorithm
     numOfIterations = 100
 
     population = generatePopulation(populationSize, genesLength, minGene, maxGene)
+    
+    @testset "Elitistic Selection: " begin
+        num_gen, best = getAverage(population, 
+                                   elitistSelection(elitePercent), 
+                                   mutationPercent, 
+                                   makeCrossoverFunc([1;3]), 
+                                   numOfIterations)
 
-    num_gen, best = getAverage(population, 
-                                    elitePercent, 
-                                    mutationPercent, 
-                                    makeCrossoverFunc([1;3]), 
-                                    numOfIterations)
+        @test best < 0.1 # Test if the absolute error is smaller than 0.1
+    end
 
-    @test best < 0.1 # Test if the absolute error is smaller than 0.1
+    @testset "Roulette Wheel Selection: " begin
+        num_gen, best = getAverage(population, 
+                                   rouletteWheelSelection(), 
+                                   mutationPercent, 
+                                   makeCrossoverFunc([1;3]), 
+                                   numOfIterations)
+
+        @test best < 0.1 # Test if the absolute error is smaller than 0.1
+    end
 end
