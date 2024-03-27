@@ -1,9 +1,27 @@
 module GeneticAlgorithm
 
-include("crossover.jl")
+include("selection.jl")
 
 
-function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
+export generatePopulation
+export fitFunction
+
+export makeCrossoverFunc
+
+export elitistSelection
+export rouletteWheelSelection
+
+export geneticAlgorithm
+
+export getAverage
+export analyzeElitePercentage
+export analyzeMutationPercentage
+export analyzeNumberOfIteration
+export analyzePopulationSize
+
+export printResult
+
+function geneticAlgorithm(population::Vector{Entity}, selectAndCross::Function, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
     bestFitnes = []
     
     updatePopulationFitness!(population, fitFunction)
@@ -11,19 +29,9 @@ function geneticAlgorithm(population::Vector{Entity}, elitePercent::Float64, mut
     push!(bestFitnes, population[1].fitness)
 
     while !shouldStop(iter, bestFitnes)
-        n = length(population)
-
-        eliteNumber = Int(trunc(elitePercent*n));
-
-        eliteNumber  = eliteNumber + (n-eliteNumber)%2
-
-        elite = deepcopy(population[1:eliteNumber])
-
-        population = crossover!(population[eliteNumber+1:end], crossoverFunc!)
+        population = selectAndCross(population, crossoverFunc!)
 
         mutatePopulation!(population, mutationPercent)
-
-        population = [population; elite]
 
         updatePopulationFitness!(population, fitFunction)
 
@@ -49,16 +57,16 @@ end
 
 # ANALYZATION
 
-function getAverage(population::Vector{Entity}, elitePercent::Float64, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
+function getAverage(population::Vector{Entity}, selectAndCross::Function, mutationPercent::Float64, crossoverFunc!::Function, iter::Int)
     avg_gen = 0
     avg_best = 0
 
     for i in 1:100
         gen_i, best_i = geneticAlgorithm(population, 
-                                       elitePercent, 
-                                       mutationPercent, 
-                                       crossoverFunc!, 
-                                       numOfIterations)
+                                        selectAndCross, 
+                                        mutationPercent, 
+                                        crossoverFunc!, 
+                                        iter)
         avg_gen += gen_i
         avg_best += best_i.fitness
     end
@@ -66,7 +74,7 @@ function getAverage(population::Vector{Entity}, elitePercent::Float64, mutationP
     return (avg_gen/100, avg_best/100)
 end
 
-function analyzeElitePercentage(values::Array{Float64})
+function analyzeElitePercentage(values::Array{Function})
     results = zeros(length(values), 2)
 
     for i in 1:length(values)
@@ -92,7 +100,7 @@ function analyzeMutationPercentage(values::Array{Float64})
         population_i = generatePopulation(populationSize, genesLength, minGene, maxGene)
 
         gen_i, best_i = getAverage(population_i, 
-                           elitePercent, 
+                           elitistSelection(elitePercent), 
                            values[i], 
                            makeCrossoverFunc([1;3]), 
                            numOfIterations)
@@ -111,7 +119,7 @@ function analyzePopulationSize(values::Vector{Int})
         population_i = generatePopulation(values[i], genesLength, minGene, maxGene)
 
         gen_i, best_i = getAverage(population_i, 
-                                   elitePercent, 
+                                   elitistSelection(elitePercent), 
                                    mutationPercent, 
                                    makeCrossoverFunc([1;3]), 
                                    numOfIterations)
@@ -130,7 +138,7 @@ function analyzeNumberOfIteration(values::Vector{Int})
         population_i = generatePopulation(populationSize, genesLength, minGene, maxGene)
 
         gen_i, best_i = getAverage(population_i, 
-                                   elitePercent, 
+                                   elitistSelection(elitePercent), 
                                    mutationPercent, 
                                    makeCrossoverFunc([1;3]), 
                                    values[i])
@@ -149,14 +157,5 @@ function printResult(values, results)
         @printf "%5.2f | %5.2f , %5.2f \n" values[i] results[i,1] results[i,2]
     end
 end
-
-export geneticAlgorithm
-export getAverage
-export analyzeElitePercentage
-export analyzeMutationPercentage
-export analyzeNumberOfIteration
-export analyzePopulationSize
-
-export printResult
 
 end
